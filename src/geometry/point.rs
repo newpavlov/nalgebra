@@ -1,8 +1,8 @@
 use approx::{AbsDiffEq, RelativeEq, UlpsEq};
 use num::One;
-use std::cmp::Ordering;
-use std::fmt;
-use std::hash;
+use core::cmp::Ordering;
+use core::fmt;
+use core::hash;
 #[cfg(feature = "abomonation-serialize")]
 use std::io::{Result as IOResult, Write};
 
