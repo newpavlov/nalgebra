@@ -4,8 +4,8 @@ version = "0.18.0"
 authors = [ "Sébastien Crozet <developer@crozet.re>" ]
 
 description = "Linear algebra library with transformations and statically-sized or dynamically-sized matrices."
-documentation = "http://nalgebra.org/rustdoc/nalgebra/index.html"
-homepage = "http://nalgebra.org"
+documentation = "https://nalgebra.org/rustdoc/nalgebra/index.html"
+homepage = "https://nalgebra.org"
 repository = "https://github.com/rustsim/nalgebra"
 readme = "README.md"
 categories = [ "science" ]
@@ -58,7 +58,7 @@ rand = { version = "0.7", features = ["small_rng"] }
 # IsaacRng is used by benches; keep for reproducibility?
 rand_isaac = "0.2"
 ### Uncomment this line before running benchmarks.
-### We can't just let this uncommented because that would breack
+### We can't just let this uncommented because that would break
 ### compilation for #[no-std] because of the terrible Cargo bug
 ### https://github.com/rust-lang/cargo/issues/4866
 #criterion = "0.2.10"

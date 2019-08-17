@@ -1,7 +1,7 @@
 use num::{One, Signed, Zero};
-use core::cmp::PartialOrd;
-use core::iter;
-use core::ops::{
+use std::cmp::{PartialOrd, Ordering};
+use std::iter;
+use std::ops::{
     Add, AddAssign, Div, DivAssign, Index, IndexMut, Mul, MulAssign, Neg, Sub, SubAssign,
 };
 
@@ -868,15 +868,16 @@ where
 
 impl<N: Scalar, R: Dim, C: Dim, S: Storage<N, R, C>> Matrix<N, R, C, S> {
     #[inline(always)]
-    fn xcmp<N2>(&self, abs: impl Fn(N) -> N2, cmp: impl Fn(N2, N2) -> bool) -> N2
+    fn xcmp<N2>(&self, abs: impl Fn(N) -> N2, ordering: Ordering) -> N2
         where N2: Scalar + PartialOrd + Zero {
-        let mut max = N2::zero();
+        let mut iter = self.iter();
+        let mut max = iter.next().cloned().map_or(N2::zero(), &abs);
 
-        for e in self.iter() {
+        for e in iter {
             let ae = abs(*e);
 
-            if cmp(ae, max) {
-                max = ae;
+            if ae.partial_cmp(&max) == Some(ordering) {
+                    max = ae;
             }
         }
 
@@ -884,44 +885,84 @@ impl<N: Scalar, R: Dim, C: Dim, S: Storage<N, R, C>> Matrix<N, R, C, S> {
     }
 
     /// Returns the absolute value of the component with the largest absolute value.
+    /// # Example
+    /// ```
+    /// # use nalgebra::Vector3;
+    /// assert_eq!(Vector3::new(-1.0, 2.0, 3.0).amax(), 3.0);
+    /// assert_eq!(Vector3::new(-1.0, -2.0, -3.0).amax(), 3.0);
+    /// ```
     #[inline]
     pub fn amax(&self) -> N
         where N: PartialOrd + Signed {
-        self.xcmp(|e| e.abs(), |a, b| a > b)
+        self.xcmp(|e| e.abs(), Ordering::Greater)
     }
 
     /// Returns the the 1-norm of the complex component with the largest 1-norm.
+    /// # Example
+    /// ```
+    /// # use nalgebra::{Vector3, Complex};
+    /// assert_eq!(Vector3::new(
+    ///     Complex::new(-3.0, -2.0),
+    ///     Complex::new(1.0, 2.0),
+    ///     Complex::new(1.0, 3.0)).camax(), 5.0);
+    /// ```
     #[inline]
     pub fn camax(&self) -> N::RealField
         where N: ComplexField {
-        self.xcmp(|e| e.norm1(), |a, b| a > b)
+        self.xcmp(|e| e.norm1(), Ordering::Greater)
     }
 
     /// Returns the component with the largest value.
+    /// # Example
+    /// ```
+    /// # use nalgebra::Vector3;
+    /// assert_eq!(Vector3::new(-1.0, 2.0, 3.0).max(), 3.0);
+    /// assert_eq!(Vector3::new(-1.0, -2.0, -3.0).max(), -1.0);
+    /// ```
     #[inline]
     pub fn max(&self) -> N
         where N: PartialOrd + Signed {
-        self.xcmp(|e| e, |a, b| a > b)
+        self.xcmp(|e| e, Ordering::Greater)
     }
 
     /// Returns the absolute value of the component with the smallest absolute value.
+    /// # Example
+    /// ```
+    /// # use nalgebra::Vector3;
+    /// assert_eq!(Vector3::new(-1.0, 2.0, -3.0).amin(), 1.0);
+    /// assert_eq!(Vector3::new(10.0, 2.0, 30.0).amin(), 2.0);
+    /// ```
     #[inline]
     pub fn amin(&self) -> N
         where N: PartialOrd + Signed {
-        self.xcmp(|e| e.abs(), |a, b| a < b)
+        self.xcmp(|e| e.abs(), Ordering::Less)
     }
 
     /// Returns the the 1-norm of the complex component with the smallest 1-norm.
+    /// # Example
+    /// ```
+    /// # use nalgebra::{Vector3, Complex};
+    /// assert_eq!(Vector3::new(
+    ///     Complex::new(-3.0, -2.0),
+    ///     Complex::new(1.0, 2.0),
+    ///     Complex::new(1.0, 3.0)).camin(), 3.0);
+    /// ```
     #[inline]
     pub fn camin(&self) -> N::RealField
         where N: ComplexField {
-        self.xcmp(|e| e.norm1(), |a, b| a < b)
+        self.xcmp(|e| e.norm1(), Ordering::Less)
     }
 
     /// Returns the component with the smallest value.
+    /// # Example
+    /// ```
+    /// # use nalgebra::Vector3;
+    /// assert_eq!(Vector3::new(-1.0, 2.0, 3.0).min(), -1.0);
+    /// assert_eq!(Vector3::new(1.0, 2.0, 3.0).min(), 1.0);
+    /// ```
     #[inline]
     pub fn min(&self) -> N
         where N: PartialOrd + Signed {
-        self.xcmp(|e| e, |a, b| a < b)
+        self.xcmp(|e| e, Ordering::Less)
     }
 }

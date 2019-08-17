@@ -8,7 +8,7 @@
 * Real-time computer physics.
 
 ## Using **nalgebra**
-You will need the last stable build of the [rust compiler](http://www.rust-lang.org)
+You will need the last stable build of the [rust compiler](https://www.rust-lang.org)
 and the official package manager: [cargo](https://github.com/rust-lang/cargo).
 
 Simply add the following to your `Cargo.toml` file:
@@ -83,8 +83,8 @@ an optimized set of tools for computer graphics and physics. Those features incl
 #![deny(unused_results)]
 #![deny(missing_docs)]
 #![doc(
-    html_favicon_url = "http://nalgebra.org/img/favicon.ico",
-    html_root_url = "http://nalgebra.org/rustdoc"
+    html_favicon_url = "https://nalgebra.org/img/favicon.ico",
+    html_root_url = "https://nalgebra.org/rustdoc"
 )]
 #![no_std]
 #[cfg(any(feature = "std", feature = "io", feature = "abomonation-serialize"))]
